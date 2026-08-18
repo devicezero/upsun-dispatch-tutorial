@@ -159,7 +159,7 @@ final class ArticleRepository
     private function readingTime(string $markdown): int
     {
         $words = str_word_count(strip_tags($markdown));
-
+    
         return max(1, (int) ceil($words / 200));
     }
 
