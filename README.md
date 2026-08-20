@@ -5,9 +5,13 @@ articles and individual article pages. Articles are authored as **Markdown files
 committed to this repository** — there is no database and no admin. It exists as
 a clean demo project for Upsun internal users.
 
-- **Backend:** Symfony 7 (PHP 8.5), Twig — no JavaScript, no front-end framework.
+- **Backend:** Symfony 7 (PHP 8.5), Twig — no front-end framework. The only
+  JavaScript is a small vanilla script that powers the light/dark switcher.
 - **Content:** Markdown + YAML front matter under [`content/articles/`](content/articles/), rendered with [league/commonmark](https://commonmark.thephpleague.com/).
 - **Design:** Tailwind CSS, themed with the Upsun / Dispatch design system (dark indigo hero, lime + blue accents, `Space Grotesk` / `Inter`).
+- **Theming:** Light and dark modes. The site follows the visitor's OS
+  `prefers-color-scheme` on first load; a switcher (top-right) lets them
+  override it, and the choice is persisted in `localStorage`.
 
 ## Routes
 
@@ -27,7 +31,9 @@ src/Blog/ArticleRepository.php Reads & parses the Markdown files
 src/Controller/BlogController.php
 templates/                     Twig: base, partials, blog/index, blog/article
 assets/styles/app.css          Tailwind source
+assets/js/theme.js             Light/dark switcher source
 public/build/app.css           Compiled stylesheet (committed)
+public/build/theme.js          Served copy of the switcher script (committed)
 tailwind.config.js             Design tokens
 ```
 
@@ -65,6 +71,10 @@ curl -sSL -o tools/tailwindcss \
   https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.17/tailwindcss-macos-arm64
 chmod +x tools/tailwindcss
 ./tools/tailwindcss -c tailwind.config.js -i assets/styles/app.css -o public/build/app.css --minify
+
+# The switcher script needs no compilation — copy the source to the web root
+# after editing it (a committed copy is already in place).
+cp assets/js/theme.js public/build/theme.js
 
 # Serve
 symfony serve                                  # if the Symfony CLI is installed
