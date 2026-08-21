@@ -48,6 +48,10 @@ applications:
       php:
         opcache.preload: config/preload.php
 
+tasks:
+  performance-agent:
+    base: "performance-agent"
+
 routes:
   https://{default}/:
     type: upstream
