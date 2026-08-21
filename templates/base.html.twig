@@ -3,6 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {# Resolve the theme before first paint to avoid a flash of the wrong
+       colours: an explicit stored choice wins, otherwise follow the OS. #}
+    <script>
+        (function () {
+            try {
+                var stored = localStorage.getItem('theme');
+                var theme = stored
+                    || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch (e) {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+        })();
+    </script>
     <title>{% block title %}Example Blog{% endblock %}</title>
     <meta name="description" content="{% block meta_description %}Field notes on cloud infrastructure and AI.{% endblock %}">
 
@@ -16,10 +31,22 @@
     {% block stylesheets %}{% endblock %}
 </head>
 <body class="min-h-screen flex flex-col">
+    <button type="button" data-theme-toggle class="theme-toggle" aria-label="Switch to dark theme" aria-pressed="false">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/>
+        </svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4.2"/>
+            <path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/>
+        </svg>
+    </button>
+
     <main class="flex-1">
         {% block body %}{% endblock %}
     </main>
 
     {% include 'partials/_footer.html.twig' %}
+
+    <script src="/build/theme.js" defer></script>
 </body>
 </html>

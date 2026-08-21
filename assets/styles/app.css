@@ -69,3 +69,208 @@
 .article-prose :where(thead) {
   @apply border-b-2 border-slatey-200;
 }
+
+/* ==========================================================================
+   Light / dark theming
+   --------------------------------------------------------------------------
+   Hand-authored (no @apply) so it survives verbatim through the Tailwind CLI
+   and stays in sync with the committed public/build/app.css.
+
+   Colour decisions live in `--theme-*` custom properties that are only
+   *defined* for the dark palette. Every consumer reads them with a light
+   fallback — `var(--theme-x, <light value>)` — so light mode renders exactly
+   as before, while flipping a single ancestor to the dark palette recolours
+   the whole page.
+
+   The dark palette is applied when:
+     - the visitor (or the no-flash head script) sets data-theme="dark", or
+     - the OS prefers dark AND no explicit light choice was made — this is the
+       JavaScript-disabled fallback; data-theme="light" always opts out.
+   ========================================================================== */
+
+:root[data-theme='dark'] {
+  --theme-bg: #0f1115; /* ink-900 — page base */
+  --theme-surface: #16181d; /* ink-800 — cards, tags, raised surfaces */
+  --theme-surface-alt: #16181d;
+  --theme-text: #eff1f4; /* slatey-100 — primary text */
+  --theme-text-muted: #9aa2af; /* slatey-400 */
+  --theme-text-soft: #cbd0d8; /* slatey-300 */
+  --theme-border: #33373f; /* slatey-700 */
+  --theme-border-soft: #33373f;
+  --theme-accent-bg: #eff1f4;
+  --theme-accent-text: #0f1115;
+  --theme-prose-body: #cbd0d8;
+  --theme-prose-heading: #eff1f4;
+  --theme-prose-bold: #eff1f4;
+  --theme-prose-link: #6d5bff; /* brand-violet */
+  --theme-prose-link-border: rgba(109, 91, 255, 0.4);
+  --theme-prose-link-border-hover: #6d5bff;
+  --theme-prose-quote-bg: #16181d;
+  --theme-prose-quote-text: #cbd0d8;
+  --theme-prose-code-bg: #16181d;
+  --theme-prose-code-text: #eff1f4;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --theme-bg: #0f1115;
+    --theme-surface: #16181d;
+    --theme-surface-alt: #16181d;
+    --theme-text: #eff1f4;
+    --theme-text-muted: #9aa2af;
+    --theme-text-soft: #cbd0d8;
+    --theme-border: #33373f;
+    --theme-border-soft: #33373f;
+    --theme-accent-bg: #eff1f4;
+    --theme-accent-text: #0f1115;
+    --theme-prose-body: #cbd0d8;
+    --theme-prose-heading: #eff1f4;
+    --theme-prose-bold: #eff1f4;
+    --theme-prose-link: #6d5bff;
+    --theme-prose-link-border: rgba(109, 91, 255, 0.4);
+    --theme-prose-link-border-hover: #6d5bff;
+    --theme-prose-quote-bg: #16181d;
+    --theme-prose-quote-text: #cbd0d8;
+    --theme-prose-code-bg: #16181d;
+    --theme-prose-code-text: #eff1f4;
+  }
+}
+
+/* Smoothly cross-fade when the theme flips, unless the visitor asked not to. */
+@media (prefers-reduced-motion: no-preference) {
+  body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}
+
+/* Surfaces & text — light fallbacks match the original design tokens. */
+body {
+  background-color: var(--theme-bg, #ffffff);
+  color: var(--theme-text, #09090b);
+}
+.bg-white {
+  background-color: var(--theme-surface, #ffffff);
+}
+.bg-slatey-50 {
+  background-color: var(--theme-surface-alt, #f7f8fa);
+}
+.text-ink-950 {
+  color: var(--theme-text, #09090b);
+}
+.text-slatey-500 {
+  color: var(--theme-text-muted, #6b7280);
+}
+.text-slatey-600 {
+  color: var(--theme-text-soft, #4b515c);
+}
+.border-slatey-200 {
+  border-color: var(--theme-border, #e3e6eb);
+}
+.border-slatey-100 {
+  border-color: var(--theme-border-soft, #eff1f4);
+}
+.hover\:border-slatey-300:hover {
+  border-color: var(--theme-border, #cbd0d8);
+}
+
+/* Component classes (built from @apply, so their colours are inlined and are
+   re-pointed at the theme tokens here). */
+.tag {
+  background-color: var(--theme-surface, #ffffff);
+  border-color: var(--theme-border, #e3e6eb);
+  color: var(--theme-text-soft, #4b515c);
+}
+.tag-accent {
+  background-color: var(--theme-accent-bg, #0c0f10);
+  border-color: transparent;
+  color: var(--theme-accent-text, #ffffff);
+}
+
+/* Article typography. */
+.article-prose :where(h2),
+.article-prose :where(h3) {
+  color: var(--theme-prose-heading, #0c0f10);
+}
+.article-prose {
+  --tw-prose-body: var(--theme-prose-body, #33373f);
+  --tw-prose-bold: var(--theme-prose-bold, #0c0f10);
+  --tw-prose-bullets: var(--theme-border, #cbd0d8);
+  --tw-prose-counters: var(--theme-text-muted, #6b7280);
+  --tw-prose-hr: var(--theme-border, #e3e6eb);
+  --tw-prose-th-borders: var(--theme-border, #e3e6eb);
+  --tw-prose-td-borders: var(--theme-border, #e3e6eb);
+  --tw-prose-captions: var(--theme-text-muted, #6b7280);
+}
+.article-prose :where(a) {
+  color: var(--theme-prose-link, #0050ff);
+  border-bottom-color: var(--theme-prose-link-border, rgba(0, 80, 255, 0.3));
+}
+.article-prose :where(a):hover {
+  border-bottom-color: var(--theme-prose-link-border-hover, #0050ff);
+}
+.article-prose :where(blockquote) {
+  background-color: var(--theme-prose-quote-bg, #f7f8fa);
+  color: var(--theme-prose-quote-text, #33373f);
+}
+.article-prose :where(code):not(pre code) {
+  background-color: var(--theme-prose-code-bg, #eff1f4);
+  color: var(--theme-prose-code-text, #0f1115);
+}
+.article-prose :where(thead) {
+  border-bottom-color: var(--theme-border, #e3e6eb);
+}
+
+/* ── Theme switcher ──────────────────────────────────────────────────────
+   A fixed pill that reads well over both the light page body and the dark
+   hero it sits on at the top of every page. */
+.theme-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 50;
+  display: inline-flex;
+  height: 2.5rem;
+  width: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(9, 9, 11, 0.4);
+  color: #ffffff;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.theme-toggle:hover {
+  background-color: rgba(9, 9, 11, 0.6);
+}
+.theme-toggle:focus-visible {
+  outline: 2px solid #0050ff;
+  outline-offset: 2px;
+}
+.theme-toggle svg {
+  height: 1.25rem;
+  width: 1.25rem;
+}
+:root[data-theme='dark'] .theme-toggle {
+  border-color: rgba(255, 255, 255, 0.15);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+:root[data-theme='dark'] .theme-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+/* Show the icon that represents the theme you'd switch *to*. */
+.theme-toggle .icon-sun {
+  display: none;
+}
+:root[data-theme='dark'] .theme-toggle .icon-sun {
+  display: block;
+}
+:root[data-theme='dark'] .theme-toggle .icon-moon {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle {
+    transition: none;
+  }
+}
